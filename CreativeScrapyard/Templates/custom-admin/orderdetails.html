@@ -1,0 +1,151 @@
+{% extends 'custom-admin/common.html' %} {% load static %} {%block content%} {% load mathfilters %}
+<div class="page-title">
+    Order No. {{ order.order_id }}
+    <hr>
+</div>
+<div class="container">
+    <div class="row my-1">
+        <div class="col">
+            <b><span class="mx-auto">Buyer User ID : </span></b>
+            <span>{{ order.user.user_id }}</span>
+        </div>
+        <!-- <div class="col">
+            <b><span class="">Seller Full Name : </span></b>
+            <span> Raghav Agrawal</span>
+        </div> -->
+    </div>
+    <div class="row my-1">
+        <div class="col">
+            <b><span class="mx-auto">Order Date : </span></b>
+            <span> 	{{ order.order_date|date:"M d, Y" }}</span>
+        </div>
+        <div class="col">
+            <b><span class="">No Of Items : </span></b>
+            <span> {{ order.tbl_orders_details_set.all|length }}</span>
+        </div>
+    </div>
+    <div class="row my-1">
+        <div class="col">
+            <b><span class="mx-auto">Deliver To : </span></b>
+            <span>{{ order.person_name }}</span>
+        </div>
+        <div class="col">
+            <b><span class="">Contact No : </span></b>
+            <span>{{ order.contact_no }}</span>
+        </div>
+    </div>
+    <div class="row my-1">
+        <div class="col">
+            <b><span class="mx-auto">Delivery Address : </span></b>
+            <span>{{ order.delivery_address }}</span>
+        </div>
+    </div>
+    <div class="row my-1">
+        <div class="col">
+            <div class="table-responsive table-user">
+                <table class="table table-hover">
+                    <thead>
+                        <tr>
+                            <th class="text-center">Detail ID</th>
+                            <th class="text-center">Product ID</th>
+                            <th class="text-center">Product Name</th>
+                            <th class="text-center">Seller Name</th>
+                            <th class="text-center">Status</th>
+                            <th class="text-center">Quantity</th>
+                            <th class="text-center">Price</th>
+                            <th class="text-center">Total</th>
+                            <th class="text-center">Action</th>
+
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for detail in orderDetails %}
+                        <tr>
+                            <td class="text-center"><span class="list-enq-name">{{detail.order_details_id}}</span>
+                            </td>
+                            <td class="text-center"><a href=""><span class="list-enq-name">{{detail.crt_item_mst.crt_item_id}}</span></a>
+                            </td>
+                            <td class="text-center"><a href=""><span class="list-enq-name">{{ detail.crt_item_mst.crt_item_name }}</span></a>
+                            </td>
+                            <td class="text-center"><a href=""><span class="list-enq-name">{{ detail.crt_item_mst.user.first_name }} {{ detail.crt_item_mst.user.last_name }}</span></a>
+                            </td>
+                            <td class="text-center">
+                                <form method="post" id="detailStatusUpdate-{{detail.order_details_id}}"> {% csrf_token %}
+                                    <input type="hidden" name="detailId" value="{{detail.order_details_id}}">
+                                    <select class="p-1 ord-status" name="currentStatus">
+                                        <option value="1" {% if detail.item_status == 1 %} selected {% endif %}>Pending</option>
+                                        <option value="2" {% if detail.item_status == 2 %} selected {% endif %}>Completed</option>
+                                        <option value="3" {% if detail.item_status == 3 %} selected {% endif %}>Cancelled</option>
+                                        <option value="4" {% if detail.item_status == 4 %} selected {% endif %}>Failed</option>
+                                        <option value="5" {% if detail.item_status == 5 %} selected {% endif %}>Returned</option>
+                                    </select>
+                                </form>
+                            </td>
+                            <td class="text-center"><span class="list-enq-name">{{ detail.crt_item_qty }}</span>
+                            </td>
+                            <td class="text-center"><span class="list-enq-name">&#8377; {{ detail.unit_price }}</span>
+                            </td>
+
+                            <td class="text-center">
+                                <span class="list-enq-name">&#8377; {{ detail.total_price }}</span>
+                            </td>
+
+                            <td class="text-center">
+                                <button type="submit" class="btn btn-sm pri-bg-color" form="detailStatusUpdate-{{detail.order_details_id}}">Save</button>
+                            </td>
+                        </tr>
+                        {% endfor %}
+
+
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+    <div class="row my-1">
+        <div class="col">
+            <div class="row">
+                <div class="col">
+                    <b>Payment Method</b>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col">
+                    {% if payment == None %} Cash on Delivery {% else %} payment.payment_mode {% endif %}
+                </div>
+            </div>
+        </div>
+        <div class="col">
+            <div class="row">
+                <div class="col">
+                    <b>Total
+                        <hr>
+                    </b>
+                    <div class="row">
+                        <div class="col">
+                            Cost Price :
+                        </div>
+
+                        <div class="col">&#8377; {{ totalPrice.tot|floatformat:2|sub:commission|floatformat:2 }}</div>
+                    </div>
+                    <hr>
+                    <div class="row">
+                        <div class="col">
+                            Comission :
+                        </div>
+                        <div class="col">&#8377; {{ commission|floatformat:2 }}</div>
+                    </div>
+                    <hr>
+                    <div class="row">
+                        <div class="col">
+                            Total :
+                        </div>
+                        <div class="col">&#8377; {{ totalPrice.tot|floatformat:2 }}</div>
+                    </div>
+                    <hr>
+
+                </div>
+            </div>
+        </div>
+    </div>
+    {% endblock %}

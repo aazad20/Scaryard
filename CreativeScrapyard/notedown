@@ -1,0 +1,269 @@
+************************************
+dropdown in account and categories
+sorting of items
+payment at seller side layout
+check the admin user item count
+archivers page
+add documents bank selection 
+cancel item in order order_details
+
+ 
+************************************
+ASK:
+
+--issue and quesr status changed so save btn remove?
+--admin crt and scp sold prds show?
+--ask for approp title in report
+--prd delte for user
+
+-show prd summary at admin side 
+--filtered by report in other also
+
+
+
+
+
+sold scrp item at Dashboard will visible as status sold.
+
+BUyer Field: amt and total prd bought, action
+Seller Field: amt and total prd sold, action
+
+
+
+yash
+------------------------
+give rating review
+product sort UI on scrap and creative
+give links in some places header footer-> queries,cart,about-us
+
+>> BDGE me SWAL2 kr
+------------------------
+
+
+Nikul
+------------------------
+profile rating star color
+ERD queries
+contact-us 
+report modal
+add report flag item link
+------------------------
+
+
+
+********* >>CHECK DIAGRAMS ADMIN TABLE<< ******************
+
+--qty field chnage to numeric updown
+--query and report tab
+--single scrap item qty and instock remove
+
+
+-----------------------
+--Shopping Cart no item
+--disable user/product send mail reason/disable pe dropdown
+--change images
+
+*see later*breadcrumbs and 
+--sidebar open in nested page
+
+***lost your pass link in admin
+------------------------
+
+
+****************************************
+Remain After -> 
+>>add new address from checkout
+>>(chnage validation in signup and contact form TO forms.isvalid())
+
+>>remove image from storage after deleted
+>>shop cart javascript validate << POST WORK
+>>verify all status selected option=> order(Admin),queries,issues,creative,scrapitems
+>> contact seller show swal to login
+>> total product in category layout using annotate
+>> set issues on layout
+>> restrict self item report
+>> badge delete message?
+>> reportIssue see comment to set IDs and also model
+>> change active status to choice list
+>> send mail to badge assigned person
+
+--image form errors remove view code
+--edit and remove address
+
+-------------------
+>--password description
+>--validate file during upload
+
+>--think for height of product.
+>--upload item images validation error.
+
+-----------------
+>>--password strentgth validate and signup user...
+>>--queries
+
+--send contact derts for scrap 
+--login=>admin-user,forget password, reset password, email verify input.
+
+--singup
+--edit profile(User,admin)
+--contact us
+--categories
+--deactivate account validate
+--sendmail
+--disable reason input
+
+--add/edit document 
+--add new address 
+
+--assign/add badges input validate
+--add product
+--edit product
+--reported modal
+
+
+****************************************
+
+---------------------------
+
+pubs = tbl_crt_categories.objects.aggregate(num_books=Count('tbl_crt_subcategories')) -> finds total subcategories
+
+
+---------------------------------
+contact and issue discuss
+
+compt->reported items/users(ISSUES) TABLE								queries->contactus
+
+id, SKU, issuetype,rptUsrID, date, Senduser_id, ordet_id							id, name, email, sub, msg, date
+------------------------------------------------------------------------------------------------------------------------
+1001 SKU1 inappt   --        d1    200           ---
+1001 --   inappt   2001      d1    200	         ---
+1001 --   inappt   ---       d1    200	         333
+
+
+1-crt
+2- scp
+3- ord
+4- user
+
+
+issue_id, iss_type, issue_sub, message ref_id, 	date, 	sendUId
+101	  1	inappt      --       1001        d1      2001
+102       2     inappt       abc     1001	 d2	 3001
+
+
+
+                    {{ form.first_name.errors.as_text}}
+                    
+                    
+                    {{form.errors.first_name}}
+                    {% for key, key_errors in form.errors.as_data.items %}
+                        {% comment %} {{ key }}  {% endcomment %}
+                        
+                        {% for error in key_errors %}
+                        {% comment %} {{error.code}} {% endcomment %}
+                            {% if error.code == 'invalid'%}
+                                {% comment %} {{error.message}} {% endcomment %}
+                            {% endif %}
+                        {% endfor %}
+                    {% endfor %}
+                </div>
+
+                                                        {{form.errors.first_name}}                                   
+
+
+
+git rm --cached filename                                            
+
+
+         <!-- {% with n='[1,2,3,4,5]' %}
+            <div class="d-md-flex row ">
+                {% for i in n %}
+                <div class="col-12 col-sm-6 col-lg-3">
+                    {% include 'shop/product-grid.html' %}
+                </div>
+                {%endfor%}
+            </div>
+            {%endwith%} -->
+
+
+         {% with n='[1,2,3,4,5]' %}
+            <div class="d-md-flex row ">
+                {% for i in n %}
+                <div class="col-12 col-sm-6 col-lg-3">
+                    {% include 'shop/product-grid.html' %}
+                </div>
+                {%endfor%}
+            </div>
+            {%endwith%}
+
+
+
+
+
+                                        {% with n='[1,2,3,4,5,6,7,8,9]' %} {% for i in n %}
+                                <tr>
+                                    <td><a href="#"><span class="list-enq-name">Marsha Hogan</span></a>
+                                    </td>
+                                    <td>dummy@dummy.com</td>
+                                    <td>
+                                        <span class="p-2 listing">Artist</span>
+
+                                    </td>
+                                    <td>
+                                        <span class="listing"><i class="fa fa-check" aria-hidden="true"></i></span>
+                                    </td>
+                                    <td>
+                                        <a href="{% url 'Authentication:profile' %}" class="user-view mx-auto"><button
+                                                class="btn btn-sm pri-bg-color"><img
+                                                    src="https://s2.svgbox.net/octicons.svg?ic=eye-bold&color=fff"
+                                                    width="20" height="20"></button></a>
+                                                    <a href="# " id="deleteAssignedBadge" class="user "><button class="btn btn-sm btn-danger " ><img src="https://s2.svgbox.net/octicons.svg?ic=trashcan-bold&color=fff " width="20 " height="20 "></button></a>
+                                    </td>
+                                    {% comment %}
+                                    <td>
+                                        <a href="#"><i class="fa fa-pencil-square-o text-white p-2 rounded cus"
+                                                aria-hidden="true"></i></a>
+                                    </td>
+                                    <td>
+                                        <a href="#"><i class="fa fa-trash-o text-white p-2 rounded"
+                                                aria-hidden="true"></i></a>
+                                    </td> {% endcomment %}
+                                </tr>
+                                {% endfor %} {% endwith %}
+
+
+
+
+
+                        {% with n='[1,2,3,4,5]' tab='creative'%}
+                        <div class="d-md-flex row">
+                            {% for i in n %}
+                            <div class="col-12 col-sm-6 col-lg-4" id="product-grid">
+                                {% include 'shop/product-grid.html' %}
+                            </div>
+                            {%endfor%}
+                        </div>
+                        {%endwith%}
+
+
+                                            {% with n='[1,2,3,4,5]' tab='scrap'%}
+                        <div class="d-md-flex row">
+                            {% for i in n %}
+                            <div class="col-12 col-sm-6 col-lg-4">
+                                {% include 'shop/product-grid.html' %}
+                            </div>
+                            {%endfor%}
+                        </div>
+                        {%endwith%}
+
+
+
+                                            {% with n='[1,2,3,4,5]'%}
+                    <div class="d-md-flex row">
+                        {% for i in n %}
+                        <div class="col-12 col-sm-6 col-lg-3">
+                            {% include 'shop/product-grid.html' %}
+                        </div>
+                        {%endfor%}
+                    </div>
+                    {%endwith%}

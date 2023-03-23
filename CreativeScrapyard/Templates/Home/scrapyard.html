@@ -1,0 +1,324 @@
+{% extends 'common/common.html' %} {% load static %} {%block title %}Scrapyard{%endblock%} {%block link%}
+<link rel="stylesheet" href="{%  static 'css/style.css' %}">
+<link rel="stylesheet" href="{%  static 'css/scrapstyle.css' %}"> {% endblock %}
+
+<!-- <div class="bg-dark" style="width:100%;height:100%">  -->
+{% block content %}
+
+<!--Main page after nav -->
+<div class="infomain mx-5">
+    <ol class="breadcrumb">
+        <li class="breadcrumb-item"><a href="{%url 'Home:home' %}">Home</a></li>
+        <li class="breadcrumb-item"><a href="{%url 'Home:scrapyard'%}">Scrapyard</a></li>
+        <li class="breadcrumb-item"><a href="#">{{parent_category.scp_category_name|default:"All Materials"}}</a></li>
+        {%if sub_category%}
+        <li class="breadcrumb-item"><a href="#">{{sub_category.scp_sub_category_name}}</a></li>
+        {%endif%}
+    </ol>
+</div>
+
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-10">
+            <h2 class="py-2 pl-2 pl-lg-5 pl-md-4 pl-sm-3">{%if sub_category%}{{sub_category.scp_sub_category_name|default:"All Materials"}}{%else%}{{parent_category.scp_category_name|default:"All Materials"}}{%endif%}</h2>
+        </div>
+        <div class="col-2">
+            <div class="dropdown">
+                    <button class="btn btn-outline-light dropdown-toggle" id="dropdownMenuButton" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" data-offset="10,20">Sort By :
+                    {{sort|default:"Relevance"}}</button>
+                <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+                    <a class="dropdown-item" href="{% url 'Home:scrapyardsort' 'rel' %}">Revelence</a>
+                    <a class="dropdown-item" href="{% url 'Home:scrapyardsort' 'lh' %}">Low to High Price</a>
+                    <a class="dropdown-item" href="{% url 'Home:scrapyardsort' 'hl' %}">High to Low Price</a>
+                    <a class="dropdown-item" href="{% url 'Home:scrapyardsort' 'mr' %}">Most Recent</a>
+                    <a class="dropdown-item" href="{% url 'Home:scrapyardsort' 'top' %}">Top Review Artists</a>
+                    <a class="dropdown-item" href="{% url 'Home:scrapyardsort' 'alpha' %}">Alphabetic</a>
+                </div>
+            </div>
+
+        </div>
+    </div>
+    <div class="row p-3">
+        <div class="col-3 mt-3 card shadow-sm bg-dark border-secondary" style="height: fit-content;">
+            <h4 class="text-center my-2">Filters</h4>
+
+            <div>
+               <div class="text-bold border-bottom my-2 p-2">By Category: {{parent_category.scp_category_name}}</div>
+                <div>
+                    <ul>
+                        {% if not type == 'all' %}
+                        {% for subcategory in parent_category.subscrapcategory_set.all %}
+                        <li>
+                            <a href="{% url 'Home:scrapyard' 's' subcategory.scp_sub_category_id%}">{{subcategory.scp_sub_category_name}}</a>
+                        </li>
+                        {% endfor %} 
+                        {%else%} 
+                        {% for subcategory in categories %}
+                        <li>
+                            <a href="{% url 'Home:scrapyard' 'm' subcategory.scp_category_id%}">{{subcategory.scp_category_name}}</a>
+                        </li>
+                        {%endfor%} 
+                        {% endif %}
+                    </ul>
+                </div>
+            </div>
+
+            <div class="inFilter" id="byprice">
+                <div class="text-bold border-bottom my-2 p-2">By Price:</div>
+                <div class="priceFilter py-2">
+                    <div id="slider-range"></div>
+                    <form method="post" id="priceform" action="{%url 'Home:scppricefilter'%}">
+                        {% csrf_token %}
+                        <input type="hidden" id="amount1" name="min_value" value="{{min_value}}">
+                        <input type="hidden" id="amount2" name="max_value" value="{{max_value}}">
+                    </form>
+                    <p>
+                        Range: <span id="amount"></span>
+                    </p>
+                </div>
+            </div>
+
+            <!-- <div>
+                <div class="text-bold border-bottom my-2 p-2">By Color:</div>
+                <div class="widget-info color-filter clearfix py-2">
+                    <ul>
+                        <li><input class="form-check-input" type="checkbox" value="" id="defaultCheck1"><span class="color color-3"></span>Red<span class="count">59</span>
+                        </li>
+                        <li><input class="form-check-input" type="checkbox" value="" id="defaultCheck1"><span class="color color-4"></span>Blue<span class="count">45</span>
+                        </li>
+                        <li><input class="form-check-input" type="checkbox" value="" id="defaultCheck1"><span class="color color-6"></span>Green<span class="count">10</span>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+
+            <div>
+                <div class="text-bold border-bottom my-2 p-2">By Size:</div>
+                <div class="py-2">
+                    <ul>
+                        <li><input class="form-check-input" type="checkbox" value="" id="defaultCheck1">XS
+                        </li>
+                        <li><input class="form-check-input" type="checkbox" value="" id="defaultCheck1">S
+                        </li>
+                        <li><input class="form-check-input" type="checkbox" value="" id="defaultCheck1">M
+                        </li>
+                        <li><input class="form-check-input" type="checkbox" value="" id="defaultCheck1">L
+                        </li>
+                        <li><input class="form-check-input" type="checkbox" value="" id="defaultCheck1">XL
+                        </li>
+                        <li><input class="form-check-input" type="checkbox" value="" id="defaultCheck1">XXL
+                        </li>
+                    </ul>
+                </div>
+            </div> -->
+
+
+        </div>
+        <div class="col-9">
+            <div class="d-md-flex row ">
+                {% for product in products %}
+                <div class="col-12 col-sm-6 col-lg-3">
+                    <div class="product_card border-0 rounded px-0 m-3">
+                        <div class="imgbx py-0">
+                            <a href="{% if is_creative or tab == 'creative' %} {% url 'Home:Items:creativeSingleItem' product.crt_item_id %} {% else %} {% url 'Home:Items:scrapSingleItem' product.scp_item_id %} {% endif %}">
+                                <img class="img-fluid prod-thumb-img grid" src="{% if is_scrap %}{{product.get_image_url.scp_img_url.url}}{% elif is_creative %}{{product.get_image_url.crt_img_url.url}}{%endif%}" style="height: 280px; width: 220px;" alt="" change-src="{% static 'img/products/2.jpg' %}">
+                                <div class="contentbx m-0 px-3 py-3" style="{% if tab == 'scrap' %} background-color: #343a40c0; {% elif tab == 'creative' %}  rgba(255, 255, 255, 0.90); {%else%} {% endif %}">
+                                    <div class="caption">
+
+                                        <p class="product-name pb-1" style="{% if tab == 'scrap' %} color: #fff; {% elif tab == 'creative' %} #000 {% else %}   {% endif %}">
+                                            {{product.scp_item_name}}</p>
+                                        <p class="price mb-2 " style="{% if tab == 'scrap' %} color: var(--pri-color-scp); {% elif tab == 'creative' %}  color: var(--pri-color); {% else %} {% endif %}">
+                                            &#8377; {{product.scp_item_price}}</p>
+
+                                    </div>
+                                    <a href="#">
+                                        <button id="contactBtn" class="{% if is_scrap or tab == 'scrap' %} btn-scp {% else %} btn-cxt {% endif %} shadow-none px-3">{% if is_scrap or tab == 'scrap' %} Contact {% else %} Buy Now {% endif %}</button>
+                                    </a>
+                                    {% if is_creative %}
+                                    <a href="{% url 'Home:Items:Cart:addToCart' %}"><button
+                                            class="btn-cxt shadow-none px-3 mx-2"><i class="fa fa-shopping-cart"
+                                                aria-hidden="true"></i></button></a> {% else %} {% endif %}
+                                </div>
+                            </a>
+
+                        </div>
+                    </div>
+                </div>
+                {%endfor%}
+            </div>
+        </div>
+        <!--    <div class="col-9">
+            <div class="d-md-flex row ">
+                <div class="col-12 col-sm-6 col-lg-3">
+
+                    <div class="product_card border-0 rounded px-0 m-3">
+                        <div class="imgbx  py-0">
+                            <a href="{% if is_creative or type == 'creative' %} {% url 'Home:Items:creativeSingleItem' %} {% else %} {% url 'Home:Items:scrapSingleItem' %} {% endif %}">
+                                <img class="img-fluid prod-thumb-img" src="{% static 'img/products/scrap/brokenlamp.jpg' %}" alt="" change-src="{% static 'img/products/scrap/brokenlamp.jpg' %}" style="height: 280px; width: 220px;">
+                                <div class="contentbx  m-0 px-3 py-3" style="{% if type == 'scrap' %} background-color: #343a40c0; {% elif type == 'creative' %}  rgba(255, 255, 255, 0.90); {%else%} {% endif %}">
+                                    <div class="caption">
+
+                                        <p class="product-name  pb-1" style="{% if type == 'scrap' %} color: #fff; {% elif type == 'creative' %} #000 {% else %}   {% endif %}">Broken Lamp</p>
+                                        <p class="price mb-2 " style="{% if type == 'scrap' %} color: var(--pri-color-scp); {% elif type == 'creative' %}  color: var(--pri-color); {% else %} {% endif %}">&#8377; 190.00</p>
+
+                                    </div>
+                                    <a href="#">
+                                        <button class="{% if is_scrap or type == 'scrap' %} btn-scp {% else %} btn-cxt {% endif %} shadow-none px-3">{% if is_scrap or type == 'scrap' %} Contact {% else %} Buy Now {% endif %}</button>
+                                    </a>
+                                    {% if is_creative %}
+                                    <a href="#"><button class="btn-cxt shadow-none px-3 mx-2" ><i class="fa fa-shopping-cart" aria-hidden="true"></i></button></a> {% else %} {% endif %}
+                                </div>
+                            </a>
+
+                        </div>
+                    </div>
+
+                </div>
+                <div class="col-12 col-sm-6 col-lg-3">
+                    <div class="product_card border-0 rounded px-0 m-3">
+                        <div class="imgbx  py-0">
+                            <a href="{% if is_creative or type == 'creative' %} {% url 'Home:Items:creativeSingleItem' %} {% else %} {% url 'Home:Items:scrapSingleItem' %} {% endif %}">
+                                <img class="img-fluid prod-thumb-img" src="{% static 'img/products/scrap/oldmonitor.jpg' %}" alt="" change-src="{% static 'img/products/scrap/oldmonitor.jpg' %}" style="height: 280px; width: 220px;">
+                                <div class="contentbx  m-0 px-3 py-3" style="{% if type == 'scrap' %} background-color: #343a40c0; {% elif type == 'creative' %}  rgba(255, 255, 255, 0.90); {%else%} {% endif %}">
+                                    <div class="caption">
+
+                                        <p class="product-name  pb-1" style="{% if type == 'scrap' %} color: #fff; {% elif type == 'creative' %} #000 {% else %}   {% endif %}">Old Moniter</p>
+                                        <p class="price mb-2 " style="{% if type == 'scrap' %} color: var(--pri-color-scp); {% elif type == 'creative' %}  color: var(--pri-color); {% else %} {% endif %}">&#8377; 800.00</p>
+
+                                    </div>
+                                    <a href="#">
+                                        <button class="{% if is_scrap or type == 'scrap' %} btn-scp {% else %} btn-cxt {% endif %} shadow-none px-3">{% if is_scrap or type == 'scrap' %} Contact {% else %} Buy Now {% endif %}</button>
+                                    </a>
+                                    {% if is_creative %}
+                                    <a href="#"><button class="btn-cxt shadow-none px-3 mx-2" ><i class="fa fa-shopping-cart" aria-hidden="true"></i></button></a> {% else %} {% endif %}
+                                </div>
+                            </a>
+
+                        </div>
+                    </div>
+                </div>
+                <div class="col-12 col-sm-6 col-lg-3">
+                    <div class="product_card border-0 rounded px-0 m-3">
+                        <div class="imgbx  py-0">
+                            <a href="{% if is_creative or type == 'creative' %} {% url 'Home:Items:creativeSingleItem' %} {% else %} {% url 'Home:Items:scrapSingleItem' %} {% endif %}">
+                                <img class="img-fluid prod-thumb-img" src="{% static 'img/products/scrap/tires.jpg' %}" alt="" change-src="{% static 'img/products/scrap/tires.jpg' %}" style="height: 280px; width: 220px;">
+                                <div class="contentbx  m-0 px-3 py-3" style="{% if type == 'scrap' %} background-color: #343a40c0; {% elif type == 'creative' %}  rgba(255, 255, 255, 0.90); {%else%} {% endif %}">
+                                    <div class="caption">
+
+                                        <p class="product-name  pb-1" style="{% if type == 'scrap' %} color: #fff; {% elif type == 'creative' %} #000 {% else %}   {% endif %}">Second Hand Tires Size 28</p>
+                                        <p class="price mb-2 " style="{% if type == 'scrap' %} color: var(--pri-color-scp); {% elif type == 'creative' %}  color: var(--pri-color); {% else %} {% endif %}">&#8377; 520.00</p>
+
+                                    </div>
+                                    <a href="#">
+                                        <button class="{% if is_scrap or type == 'scrap' %} btn-scp {% else %} btn-cxt {% endif %} shadow-none px-3">{% if is_scrap or type == 'scrap' %} Contact {% else %} Buy Now {% endif %}</button>
+                                    </a>
+                                    {% if is_creative %}
+                                    <a href="#"><button class="btn-cxt shadow-none px-3 mx-2" ><i class="fa fa-shopping-cart" aria-hidden="true"></i></button></a> {% else %} {% endif %}
+                                </div>
+                            </a>
+
+                        </div>
+                    </div>
+                </div>
+                <div class="col-12 col-sm-6 col-lg-3">
+                    <div class="product_card border-0 rounded px-0 m-3">
+                        <div class="imgbx  py-0">
+                            <a href="{% if is_creative or type == 'creative' %} {% url 'Home:Items:creativeSingleItem' %} {% else %} {% url 'Home:Items:scrapSingleItem' %} {% endif %}">
+                                <img class="img-fluid prod-thumb-img" src="{% static 'img/products/scrap/brokenmug.jpg' %}" alt="" change-src="{% static 'img/products/scrap/brokenmug.jpg' %}" style="height: 280px; width: 220px;">
+                                <div class="contentbx  m-0 px-3 py-3" style="{% if type == 'scrap' %} background-color: #343a40c0; {% elif type == 'creative' %}  rgba(255, 255, 255, 0.90); {%else%} {% endif %}">
+                                    <div class="caption">
+
+                                        <p class="product-name  pb-1" style="{% if type == 'scrap' %} color: #fff; {% elif type == 'creative' %} #000 {% else %}   {% endif %}">Handle Broken Mug</p>
+                                        <p class="price mb-2 " style="{% if type == 'scrap' %} color: var(--pri-color-scp); {% elif type == 'creative' %}  color: var(--pri-color); {% else %} {% endif %}">&#8377; 70.00</p>
+
+                                    </div>
+                                    <a href="#">
+                                        <button class="{% if is_scrap or type == 'scrap' %} btn-scp {% else %} btn-cxt {% endif %} shadow-none px-3">{% if is_scrap or type == 'scrap' %} Contact {% else %} Buy Now {% endif %}</button>
+                                    </a>
+                                    {% if is_creative %}
+                                    <a href="#"><button class="btn-cxt shadow-none px-3 mx-2" ><i class="fa fa-shopping-cart" aria-hidden="true"></i></button></a> {% else %} {% endif %}
+                                </div>
+                            </a>
+
+                        </div>
+                    </div>
+                </div>
+                <div class="col-12 col-sm-6 col-lg-3">
+                    <div class="product_card border-0 rounded px-0 m-3">
+                        <div class="imgbx  py-0">
+                            <a href="{% if is_creative or type == 'creative' %} {% url 'Home:Items:creativeSingleItem' %} {% else %} {% url 'Home:Items:scrapSingleItem' %} {% endif %}">
+                                <img class="img-fluid prod-thumb-img" src="{% static 'img/products/scrap/cycle.jpeg' %}" alt="" change-src="{% static 'img/products/scrap/cycle.jpeg' %}" style="height: 280px; width: 220px;">
+                                <div class="contentbx  m-0 px-3 py-3" style="{% if type == 'scrap' %} background-color: #343a40c0; {% elif type == 'creative' %}  rgba(255, 255, 255, 0.90); {%else%} {% endif %}">
+                                    <div class="caption">
+
+                                        <p class="product-name  pb-1" style="{% if type == 'scrap' %} color: #fff; {% elif type == 'creative' %} #000 {% else %}   {% endif %}">Old Cycle</p>
+                                        <p class="price mb-2 " style="{% if type == 'scrap' %} color: var(--pri-color-scp); {% elif type == 'creative' %}  color: var(--pri-color); {% else %} {% endif %}">&#8377; 800.00</p>
+
+                                    </div>
+                                    <a href="#">
+                                        <button class="{% if is_scrap or type == 'scrap' %} btn-scp {% else %} btn-cxt {% endif %} shadow-none px-3">{% if is_scrap or type == 'scrap' %} Contact {% else %} Buy Now {% endif %}</button>
+                                    </a>
+                                    {% if is_creative %}
+                                    <a href="#"><button class="btn-cxt shadow-none px-3 mx-2" ><i class="fa fa-shopping-cart" aria-hidden="true"></i></button></a> {% else %} {% endif %}
+                                </div>
+                            </a>
+
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>-->
+        <div class="row mx-auto mt-3">
+            <div class="col-md-12">
+                <nav aria-label="Page navigation example">
+                    <ul class="pagination">
+                        <li class="page-item">
+                            <a class="page-link" href="#" aria-label="Previous">
+                                <span class="" aria-hidden="true">&laquo;</span>
+                            </a>
+                        </li>
+                        <li class="page-item"><a class="page-link" href="#">1</a></li>
+                        <li class="page-item"><a class="page-link" href="#">2</a></li>
+                        <li class="page-item"><a class="page-link" href="#">3</a></li>
+                        <li class="page-item">
+                            <a class="page-link" href="#" aria-label="Next">
+                                <span aria-hidden="true">&raquo;</span>
+                            </a>
+                        </li>
+                    </ul>
+                </nav>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+
+{% endblock %} {% block customscript %}
+<script>
+    $(function() {
+        let sym = "&#8377;"
+        let minval = '{{min_value}}'
+        let maxval = '{{max_value}}'
+
+        $("#slider-range").slider({
+            range: true,
+            min: 100,
+            max: 1000,
+            values: [minval, maxval],
+            slide: function(event, ui) {
+                $("#amount").html(sym + ui.values[0] + " -" + sym + ui.values[1]);
+                $("#amount1").val(ui.values[0]);
+                $("#amount2").val(ui.values[1]);
+            },
+            change: function(event, ui) {
+                $("#priceform").submit();
+
+            }
+        });
+        $("#amount").html(sym + $("#slider-range").slider("values", 0) +
+            " - " + sym + $("#slider-range").slider("values", 1));
+    })
+</script>
+{% endblock customscript %}

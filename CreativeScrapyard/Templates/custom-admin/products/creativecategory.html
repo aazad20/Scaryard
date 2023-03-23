@@ -1,0 +1,138 @@
+{% extends 'custom-admin/common.html' %} {% load static %} {% comment %} {% block breadcrumb-link%} {% if dispSubCat %}
+<li class="breadcrumb-item"><a href="#productSubmenu" data-toggle="collapse" aria-expanded="false" class="collapsed" style="opacity: 1;">Products</a></li>
+<li class="breadcrumb-item"><a href="{% url 'CustomAdmin:creativeCat' %}">Creative Categories</a></li>
+<li class="breadcrumb-item active">{{ parentCat.crt_category_name}}</li>
+{% endif %} {%endblock%} {% endcomment %} {%block content%}
+<!-- <form action="{% url 'CustomAdmin:addMainCrtCat' 'addMain' %}" method="POST"> {% csrf_token %} {{form}}
+    <input type="submit"> {{form.non_field_errors}}
+</form> -->
+<div class="pl-3 page-title ">
+    Creative Items Categories
+    <hr/>
+</div>
+<div class="row">
+    <div class="{%if not dispSubCat %}col-md-12{% else %}col-md-6{% endif %}">
+        <div class="shadow p-3 mb-5 bg-white rounded">
+            <div class="box-inn-sp">
+                <div class="page-title ">
+                    <h4 class="my-auto py-2" style="float: left;">Main Categories</h4>
+
+                    <a id="add-main-crt-cat" data-add-mainCrtCat="{% url 'CustomAdmin:addMainCrtCat' 'addMain' %}" class="link-effect" style="float:right; cursor: pointer;">{% csrf_token %}
+                        <span class="cat align-middle my-2 pl-3 ">
+                            <img class="" src="https://s.svgbox.net/hero-solid.svg?ic=plus-sm&fill=13775a" width="20" height="20">
+                            Add
+                        </span>
+                    </a>
+
+                </div>
+                {% if mainCat %}
+
+                <div class="tab-inn">
+                    <div class="table-responsive table-user">
+                        <table id="crtMainCatTable" class="table table-hover border-bottom">
+                            <thead>
+                                <tr>
+                                    <th scope="col" class="text-center">Category </th>
+                                    <!-- <th scope="col" class="text-center">Total Products</th> -->
+                                    <th class="disableFilterBy text-center">Action</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+
+
+                                {% for crtCat,cnt in mainCrtCnt %}
+                                <!-- FOR THE MAIN CAT  WITH CNT -->
+                                {% endfor %}
+
+                                <!-- FOR THE MAIN CAT EARLIER USE -->
+                                {% for crtCat in mainCat %}
+                                <tr>
+                                    <td class="text-center mainCrtCatName"><a href="{% url 'CustomAdmin:loadSubCrtCat' crtCat.crt_category_id %}"><span class="listing">{{crtCat.crt_category_name}}</span></a></td>
+
+                                    <!-- <td class="text-center"><a href="#"><span class="">
+                                        {{cnt.CrtCnt}}                            
+                                    </span></a></td> -->
+
+                                    <td class="text-center">
+                                        <button class="edit-main-crt-cat btn btn-sm pri-bg-color" data-edit-mainCrtCat="{% url 'CustomAdmin:CrtCatAction' crtCat.crt_category_id 'editMain' %}"><img src="https://s2.svgbox.net/materialui.svg?ic=edit&color=fff" width="20" height="20"></button></a>
+                                        <button class="del-each-crt-cat btn btn-sm bg-danger" data-del="{% url 'CustomAdmin:CrtCatAction' crtCat.crt_category_id 'delMain' %}"><img src=" https://s2.svgbox.net/octicons.svg?ic=trashcan-bold&color=fff " width="20 " height="20 "></button></a>
+                                    </td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <!-- <button id="loadmore-btn " class="btn-cxt ">Load more</button> -->
+                </div>
+                {% else %}
+                <div class=" " style="display:inline-block; ">
+                    <p class="p-5 m-5 text-muted ">Create Creative Categories Here... </p>
+                </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+
+
+    <!-- SUB CATEGORY -->
+    {% if dispSubCat %}
+    <div class="col-md-6 ">
+        <div class="shadow p-3 mb-5 bg-white rounded ">
+            <div class="page-title ">
+                <h4 class="my-auto py-2 " style="float: left; ">Sub Creative Categories</h4>
+
+                <a id="add-sub-crt-cat" data-add-subCrtCat="{% url 'CustomAdmin:CrtCatAction' parentCat.crt_category_id 'addCrtSub' %} " class="link-effect " style="float:right; cursor: pointer; ">
+                    <span class="cat align-middle my-2 pl-3 ">
+                            <img class=" " src="https://s.svgbox.net/hero-solid.svg?ic=plus-sm&fill=13775a " width="20 " height="20 "/>
+                            Add
+                        </span>
+                </a>
+            </div>
+            {% if subCrtCats %}
+            <div class="tab-inn ">
+                <div class="table-responsive table-user ">
+                    <h6 class="border-top pt-3 ">Sub Categories of <b>'{{ parentCat.crt_category_name }}'</b></h6>
+                    <table class="table table-hover border-bottom ">
+                        <thead>
+
+                            <tr>
+                                <th scope="col " class="text-center ">Sub Category </th>
+                                <!-- <th scope="col " class="text-center ">Total Products</th> -->
+                                <th class="disableFilterBy text-center ">Action</th>
+                            </tr>
+
+                        </thead>
+                        <tbody>
+                            {% for subs in subCrtCats %}
+                            <tr>
+                                <td class="text-center "><span class="listing ">{{ subs.crt_sub_category_name }}</span></td>
+
+                                <!-- <td class="text-center "><a href="# "><span class=" ">{{ subs.itemCount }}</span></a></td> -->
+
+                                <td class="text-center ">
+                                    <button class="edit-sub-crt-cat btn btn-sm pri-bg-color " data-edit-subCrtCat="{% url 'CustomAdmin:CrtCatAction' subs.crt_sub_category_id 'editSubs' %} "><img src="https://s2.svgbox.net/materialui.svg?ic=edit&color=fff" width="20 " height="20 "></button></a>
+                                    <button class="del-each-crt-cat btn btn-sm bg-danger " data-del="{% url 'CustomAdmin:CrtCatAction' subs.crt_sub_category_id 'delSubs' %}"><img src="https://s2.svgbox.net/octicons.svg?ic=trashcan-bold&color=fff " width="20 " height="20 "></button>
+                                </td>
+                            </tr>
+                            {% endfor %}
+
+
+                        </tbody>
+                    </table>
+                </div>
+
+            </div>
+
+            {% else %}
+            <div class=" " style="display:inline-block; ">
+                <p class="p-5 text-muted ">No Subcategory found for '{{parentCat.crt_category_name}}' </p>
+            </div>
+            {%endif%}
+        </div>
+    </div>
+</div>
+
+
+
+{% endif %} {% endblock %}

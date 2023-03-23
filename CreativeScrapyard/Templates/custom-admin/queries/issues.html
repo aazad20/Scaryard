@@ -1,0 +1,170 @@
+{% extends 'custom-admin/common.html' %} {% load static %} {% comment %} {% block breadcrumb-link%}
+<li class="breadcrumb-item active">{{title}}</li>
+{%endblock%} {% endcomment %} {%block content%}
+<div class="shadow p-3 mb-5 bg-white rounded">
+    <div class="page-title">
+        {{title}}
+        <div class="" style="float:right; cursor: pointer; ">
+            <form method="POST" action="{% url 'CustomAdmin:issues' %}"> {% csrf_token %}
+                <select name="issueType" class="p-1 form-control" onchange="this.form.submit();">
+                        <option {%if issueType == 1 %}selected{%endif%} value="1">Reported Creative Items</option>
+                        <option {%if issueType == 2 %}selected{%endif%} value="2">Reported Scrap Items</option>
+                        <option {%if issueType == 3 %}selected{%endif%} value="3">Reported Users Items</option>
+                        <!-- <option {%if issueType == 4 %}selected{%endif%} value="4">Order Issues</option> -->
+                    </select>
+            </form>
+
+        </div>
+    </div>
+    <div class="row mt-2">
+        <div class="col-md-12">
+
+            <div class="table-responsive table-user">
+                <table class="table table-hover tablemanager">
+                    <thead>
+                        <tr>
+                            <th class="text-center">Name</th>
+                            <th class="text-center">Email Id</th>
+                            <th class="text-center">{{columnName}}</th>
+                            <th class="text-center">Reason</th>
+                            <th class="text-center">Message</th>
+                            <th class="text-center">Submitted On</th>
+                            <th class="text-center">Status</th>
+
+                            <th class="disableFilterBy disableSort text-center">Action</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+
+                        {% for issue in issues %}
+
+                        <tr>
+                            <td class="text-center"><span class="list-enq-name"> {{issue.user.get_full_name|capfirst}} </span></td>
+                            <td class="text-center"><span class="list-enq-name">{{issue.user.email}}</span></td>
+
+                            {% if issueType == 1 %}
+                            <td class="text-center"><span class="list-enq-name">{{issue.crt_item.crt_item_SKU}}</span></td>
+                            {% elif issueType == 2 %}
+                            <td class="text-center"><span class="list-enq-name">{{issue.scp_item.scp_item_SKU}}</span></td>
+                            {% elif issueType == 3 %}
+                            <td class="text-center"><span class="list-enq-name">{{issue.reported_user.username}}</span></td>
+                            {% endif %}
+
+
+                            <td class="text-center"><span class="list-enq-name">{{issue.get_issue_sub_display}}</span></td>
+                            <td class="text-center"><span class="list-enq-name"><a href="#" class="read-msg" onclick="readMsg('{{issue.issue_msg}}');">Read</a></span></td>
+
+                            <td class="text-center">{{issue.issue_date}}</td>
+                            <td class="text-center">
+                                <form action="{% url 'CustomAdmin:issueStatus' issue.issue_id %}" method="POST" id="frmChangeStat">{% csrf_token %}
+                                    <select class="p-1 ord-status" name="issue_status">
+                                        <option value="1" {% if issue.issue_status == 1 %}selected{% endif %}>Pending</option>
+                                        <option value="2" {% if issue.issue_status == 2 %}selected{% endif %}>Resolved</option>
+                                        <option value="3" {% if issue.issue_status == 3 %}selected{% endif %}>Rejected</option>
+                                    </select>
+                                </form>
+                            </td>
+
+                            <td class="text-center">
+                                <button class="btn btn-sm pri-bg-color" type="submit" form="frmChangeStat">Save</button>
+                                <!--  -->
+                                {% if issueType == 1 %}
+                                <!--  -->
+                                {% if issue.issue_status == 2 %}
+                                <a href="{% url 'Home:Items:creativeSingleItem' issue.crt_item.crt_item_id  %}" class="user-view"><button class="btn btn-sm pri-bg-color " >View</button></a> {% else %}
+
+                                <a href="{% url 'Home:Items:creativeSingleItem' issue.crt_item.crt_item_id  %}" class="user-view"><button class="btn btn-sm pri-bg-color" >View</button></a>
+                                <button id="" data="{{issue.crt_item_id}}" type="crt" class="btn-sm btn-danger text-white rounded cus prod-disable mt-1" aria-hidden="true">DISABLE</button> {% endif %}
+                                <!--  -->
+                                {% elif issueType == 2 %}
+                                <!--  -->
+                                {% if issue.issue_status == 2 %}
+                                <a href="{% url 'Home:Items:scrapSingleItem' issue.scp_item.scp_item_id %}" class="user-view"><button class="btn btn-sm pri-bg-color " >View</button></a> {% else %}
+                                <a href="{% url 'Home:Items:scrapSingleItem' issue.scp_item.scp_item_id %}" class="user-view"><button class="btn btn-sm pri-bg-color " >View</button></a>
+                                <button id="" data="{{issue.scp_item_id}}" type="scp" class="btn-sm btn-danger text-white rounded cus prod-disable mt-1" aria-hidden="true">DISABLE</button></a>
+                                {% endif %}
+                                <!--  -->
+                                {%elif issueType == 3 %}
+                                <!--  -->
+                                {% if issue.issue_status == 2 %}
+                                <a href="{% url 'Authentication:profile' issue.reported_user.user_id%}" class="user-view"><button class="btn btn-sm pri-bg-color" >View</button></a> {% else %}
+                                <a href="{% url 'Authentication:profile' issue.reported_user.user_id%}" class="user-view"><button class="btn btn-sm pri-bg-color " >View</button></a>
+                                <button id="" data="{{issue.reported_user.email}}" class="btn-sm btn-danger text-white rounded cus disable-btn mt-1" aria-hidden="true">DISABLE</button> {% endif %}
+
+                                <!--  -->
+                                {% endif %}
+
+                            </td>
+                        </tr>
+                        {% empty %}
+                        <tr>
+                            <td colspan="8" class="text-center text-muted">No data</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+            <button id="loadmore-btn" class="btn-cxt">Load more</button>
+        </div>
+    </div>
+</div>
+
+
+
+{% endblock %} {% block customscript %}
+<script>
+    function readMsg(data) {
+        $(".read-msg").on("click", function() {
+            if (data) {
+
+                Swal.fire(data);
+            } else {
+                Swal.fire("N/A");
+
+            }
+        });
+    }
+</script>
+{% endblock %}
+<!-- ################################################################################## -->
+<tr>
+    <td class="text-center"><span class="list-enq-name">yash kukreja</span>
+    </td>
+    <td class="text-center"><span class="list-enq-name">yashskukreja@gmail.com</span>
+
+    </td>
+    <td class="text-center"><span class="list-enq-name">CRT-WAL-WAL-J1KL</span>
+
+    </td>
+    <td class="text-center"><span class="list-enq-name">Missing/Incorrect Information</span></td>
+    <td class="text-center"><span class="list-enq-name"><a href="#" class="read-msg" onclick="readMsg('contains misleading information');">Read</a></span></td>
+
+    <td class="text-center">20/02/2021</td>
+    <td class="text-center">
+        <select class="p-1 ord-status">
+                                                        <option value="Pending" selected>Resolved</option>
+                                                        <option value="Completed">Pending</option>
+                                                        <option value="Cancelled">Rejected</option>
+                                                    </select>
+    </td>
+    <td class="text-center">
+        {% if issueType == 1 %}
+        <a href="{% url 'Home:Items:creativeSingleItem'  %}" class="user-view"><button class="btn btn-sm pri-bg-color" >View</button></a>
+        <button id="" data="nileshchaudhary89.nc@gmail.com" class="btn-sm btn-danger text-white rounded cus prod-disable" aria-hidden="true">DISABLE</button>
+        <!--  -->
+        {% elif issueType == 2 %}
+        <a href="{% url 'Home:Items:scrapSingleItem'  %}" class="user-view"><button class="btn btn-sm pri-bg-color" >View</button></a>
+        <button id="" data="nileshchaudhary89.nc@gmail.com" class="btn-sm btn-danger text-white rounded cus disable-btn" aria-hidden="true">DISABLE</button></a>
+        <!--  -->
+        {%elif issueType == 3 %}
+        <a href="{% url 'Authentication:profile' %}" class="user-view"><button class="btn btn-sm pri-bg-color" >View</button></a>
+        <button id="" data="nileshchaudhary1905@gmail.com" class="btn-sm btn-danger text-white rounded cus disable-btn " aria-hidden="true">DISABLE</button>
+
+        <!--  -->
+
+        {% comment %} {% elif issueType == 4 %}
+        <a href="{% url 'CustomAdmin:orderdetails' 20%}" class="user-view"><button class="btn btn-sm pri-bg-color" >View</button></a>
+        <button class="btn btn-sm pri-bg-color">Save</button> {% endcomment %} {% endif %}
+
+    </td>
+</tr>

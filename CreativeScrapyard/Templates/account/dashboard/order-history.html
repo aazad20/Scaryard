@@ -1,0 +1,247 @@
+{% extends 'account/base-dashboard.html' %} {% load static %} {% load mathfilters %} {% block baselink %}
+<link rel="stylesheet" href="{% static 'css/nikul/creative-orders.css' %}" /> {% endblock %} {% block base %}
+<div>
+    {% include 'includes/messages.html' %}
+
+</div>
+<div class="page-title">
+    My Order History
+</div>
+<hr/>
+
+<div>
+    <div class="order-nav bx-shd">
+        <ul class="d-flex order-tab-list" id="myTab" role="tablist">
+            <li class="flex-fill text-center">
+                <a class="nav-link {% if title == 'Current Orders' %} tab-active {% endif %}" id="current-order-tab" href="{% url 'Authentication:order_tab_history' 'current' %}">Current Orders</a>
+            </li>
+            <li class="flex-fill  text-center">
+                <a class="nav-link {% if title == 'Completed Orders' %} tab-active {% endif %}" id="closed-order-tab" href="{% url 'Authentication:order_tab_history' 'complete' %}">Completed Orders</a>
+            </li>
+            <li class="flex-fill  text-center">
+                <a class="nav-link {% if title == 'Cancelled Orders' %} tab-active {% endif %}" id="cancelled-order-tab" href="{% url 'Authentication:order_tab_history' 'cancel' %}">Cancelled Orders</a>
+            </li>
+            <li class="flex-fill  text-center">
+                <a class="nav-link {% if title == 'Returned Orders' %} tab-active {% endif %}" id="return-order-tab" href="{% url 'Authentication:order_tab_history' 'return' %}">Return Orders</a>
+            </li>
+        </ul>
+    </div>
+
+</div>
+<div class="bx-shd my-3 py-2 px-3">
+    <span class="card-title">{{ title }}</span>
+    <div class="py-3">
+
+        <table class="table table-hover border-bottom tablemanager">
+            <thead>
+                <tr>
+                    <th class="text-center">Detail ID</th>
+                    <th scope="col" class="text-center">Order Id</th>
+                    <th class="text-center">Product ID</th>
+                    <th scope="col" class="text-center">Order Date</th>
+                    <th scope="col" class="text-center">Delivery date</th>
+                    <th class="text-center">Quantity</th>
+                    <th scope="col" class="text-center">Price</th>
+                    <th scope="col" class="text-center">Total</th>
+                    <th scope="col" class="text-center">Action</th>
+                </tr>
+            </thead>
+
+            <tbody>
+                {% for detail in details %}
+                <tr>
+                    <td class="text-center">{{ detail.order_details_id }}</td>
+                    <td class="text-center">{{ detail.order.order_id }}</td>
+                    <td class="text-center"><a href="{% url 'Home:Items:creativeSingleItem' detail.crt_item_mst.crt_item_id %}" class="link-effect">{{ detail.crt_item_mst.crt_item_id }}</a></td>
+                    <td class="text-center">{{ detail.order.order_date|date:"M d, Y" }}</td>
+                    <td class="text-center">{{ detail.order.delivery_date|date:"M d, Y" }}</td>
+                    <td class="text-center">{{ detail.crt_item_qty }}</td>
+                    <td class="text-center">&#8377; {{ detail.unit_price|floatformat:2 }}</td>
+                    <td class="text-center">&#8377; {{ detail.crt_item_qty|mul:detail.unit_price|floatformat:2 }}</td>
+                    <td class="text-center"><a href="{% url 'Authentication:order_details' detail.order.order_id %}" class="btn btn-sm pri-bg-color">View</a></td>
+                </tr>
+                {% empty %}
+                <h3 class="text-center"> No data to display here </h3>
+                {% endfor %}
+
+            </tbody>
+        </table>
+    </div>
+    <button id="loadmore-btn" class="btn btn-sm pri-bg-color btn-cxt">Load more</button>
+</div>
+{% endblock %}
+
+
+<div class="card bg-light rounded-0 mt-4">
+
+    <div class="row d-flex">
+
+        <div class="col-2" style="padding-right: 0px;">
+            <img class="img-fluid" src="{% static 'img/products/1.jpg' %}" alt="">
+        </div>
+        <div class="col-10">
+            <div class="my-2 border-bottom pb-1">
+                <span>ORDER ID : </span><span>10001</span>
+                <span style="float: right;" class="mr-2">DATE : <span
+                        style="color: rgb(141, 141, 141);">DEC 20, 2020</span></span>
+            </div>
+            <div class="my-1">
+                <span class="h5">White Gray T shirt</span>
+            </div>
+
+            <div class="my-1">
+                <span class="" style="color: #000; font-weight: 400;">Size:</span>
+                <span class="" style="color: rgb(141, 141, 141);">XL</span>
+                <span>|</span>
+                <span class="" style="color: #000; font-weight: 400;">Qty:</span>
+                <span class="" style="color: rgb(141, 141, 141);">2</span>
+            </div>
+
+            <!-- <div class="">
+                <p class="" style="color: #000; font-weight: 500;">&#8377; 300</p>
+            </div> -->
+
+            <div class="mt-1">
+                <span class="" style="color: #000; font-weight: 500;">STATUS:</span>
+                <span class="" style="color: rgb(255, 123, 0);">PENDING</span>
+                <p class="" style="color: #000; font-weight: 500;">Expected delivery date : <span style="color: rgb(141, 141, 141);">DEC 22, 2020</span></p>
+            </div>
+            <div class="mr-2">
+                <div class="form-group ml-2" style="float: right;">
+                    <a href="#">
+                        <button class="btn-cxt  mb-2" id="" style="font-size: small;"> Cancel Order
+                        </button>
+                    </a>
+                </div>
+                <!-- <form id="ord-det" method="POST"> -->
+                <div class="form-group ml-2" style="float: right;">
+                    <button class="btn  mb-2" data-toggle="collapse" id="ord-view-btn" data-target="#ord-view-details1" aria-expanded="false" aria-controls="ord-view-details2" style="font-size: small;">
+                        View Order Details
+                    </button>
+                </div>
+
+                <!-- </form> -->
+                <!-- <form id="ord-track" method="post"> -->
+                <div class="form-group" style="float: right;">
+                    <a href="{% url 'Home:Items:Order:orderTrack' %}">
+                        <button class="btn  mb-2" id="ord-track-btn" style="font-size: small;"> Track
+                        </button>
+                    </a>
+                </div>
+                <!-- </form> -->
+
+            </div>
+
+        </div>
+    </div>
+</div>
+
+
+<div class="collapse" id="ord-view-details1">
+    <div class="card card-body">
+        <div class="my-1"><span class="" style="color: #000; font-weight: 400;">Sold By : </span><span class="" style="color: rgb(141, 141, 141);">Yash</span>
+        </div>
+        <div class="row d-flex">
+            <div class="col-md-4 col-12">
+                <span style="font-size: 14px; font-weight: bold; " class="border-bottom ">Shipping Address</span>
+                <div class="my-1">
+                    <div style="font-size: 12px;"><span class="">Chaudhari Nilesh</span></div>
+                </div>
+
+                <div class="my-1">
+                    <div style="font-size: 12px;"><span>Mobile No. : </span><span>1234567890</span>
+                    </div>
+
+                </div>
+
+                <div class="my-1">
+                    <div style="font-size: 12px;"><span>4,</span></div>
+                </div>
+
+                <div class="my-1">
+
+                    <div style="font-size: 12px;"><span>Krishna Society</span></div>
+
+                </div>
+
+                <div class="my-1">
+
+                    <div style="font-size: 12px;"><span>Vasna,Gujarat</span></div>
+
+                </div>
+
+                <div class="my-1">
+
+                    <div style="font-size: 12px;"><span>382422</span></div>
+                </div>
+
+                <div class="my-1">
+
+                    <div style="font-size: 12px;"><span>India</span></div>
+                </div>
+            </div>
+
+            <div class="col-md-4 col-12">
+                <span style="font-size: 14px; font-weight: bold; " class="border-bottom ">Payment Method</span>
+                <div class="my-1">
+                    <div style="font-size: 12px;"><span class="">Pay on delivery</span></div>
+                </div>
+            </div>
+
+
+            <div class="col-md-4 col-12">
+                <div>
+                    <span style="font-size: 14px; font-weight: bold; " class="border-bottom">Order Summary</span>
+                </div>
+
+                <div class="your-order-table table-responsive">
+                    <table>
+                        <thead class="">
+                            <tr class="">
+                                <th class="product-name pt-1">Product</th>
+                                <th class="product-total pt-1 pl-3">Total</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr class="cart_item ">
+                                <td class="product-name py-1">
+                                    Vestibulum suscipit <strong class="product-quantity "> × 1</strong>
+                                </td>
+                                <td class="product-total py-1">
+                                    <span class="amount pl-3">&#8377; 165.00</span>
+                                </td>
+                            </tr>
+                            <tr class="cart_item ">
+                                <td class="product-name py-1">
+                                    Vestibulum dictum magna <strong class="product-quantity"> × 1</strong>
+                                </td>
+                                <td class="product-total py-1">
+                                    <span class="amount pl-3 pl-3">&#8377; 50.00</span>
+                                </td>
+                            </tr>
+                        </tbody>
+                        <tfoot>
+                            <tr class="cart-subtotal  ">
+                                <th class="py-1">Subtotal</th>
+                                <td><span class="amount pl-3">&#8377;215.00</span></td>
+                            </tr>
+                            <tr class="shipping ">
+                                <th class="py-1">Shipping Rate</th>
+                                <td>
+                                    <span class="amount pl-3">&#8377; 7.00</span>
+                                </td>
+                            </tr>
+                            <tr class="order-total">
+                                <th class="py-1">Order Total</th>
+                                <td><strong><span class="amount pl-3">&#8377; 222.00</span></strong>
+                                </td>
+                            </tr>
+                        </tfoot>
+                    </table>
+                </div>
+
+            </div>
+
+        </div>
+    </div>
+</div>

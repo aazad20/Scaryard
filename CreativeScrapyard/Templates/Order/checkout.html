@@ -1,0 +1,328 @@
+{%extends 'common/common.html'%} {% load static %} {% load mathfilters %} {% block title %} CS - Checkout {% endblock %} {% block link %}
+<link rel="stylesheet" href="{% static 'css/style.css' %}">
+<link rel="stylesheet" href="{% static 'css/creativestyle.css' %}"> {% endblock %} {%block content%}
+
+<main>
+    <section class="checkout-area pb-70">
+        <div class="container">
+            <div class="infomain">
+                <ol class="breadcrumb">
+                    <li class="breadcrumb-item"><a href="#">Home</a></li>
+                    <li class="breadcrumb-item"><a href="#">Creative Store</a></li>
+                    <li class="breadcrumb-item"><a href="#">My Account</a></li>
+                    <li class="breadcrumb-item"><a href="#">My Order</a></li>
+                    <li class="breadcrumb-item active">Place Order</li>
+                </ol>
+            </div>
+            <div>
+                {% include 'includes/messages.html' %}
+
+            </div>
+            <div class="my-4 border-bottom">
+                <h2>Select Deliver Address</h2>
+            </div>
+
+            <div class="row d-flex">
+                <div class="col-md-6 col-12">
+                    <div class="card bg-danger p-4 bg-light rounded-0">
+                        <h3 class="border-bottom pb-2">Your Order Address</h3>
+                        <div class="my-1">
+                            <div style="float: left; font-size: 14px;"><span class="h5">{{user.first_name|capfirst}} {{user.last_name|capfirst}}</span></div>
+                        </div>
+
+                        <div class="my-1">
+                            <div style="float: left; font-size: 14px;"><span>Mobile No. : </span><span>{{defaultAddress.contact_no}}</span>
+                            </div>
+
+                        </div>
+
+                        <div class="my-1">
+                            <div style="float: left; font-size: 14px;"><span>{{defaultAddress.line1}}</span></div>
+                        </div>
+
+                        <div class="my-1">
+
+                            <div style="float: left; font-size: 14px;"><span>{{defaultAddress.line2}}</span></div>
+
+                        </div>
+
+                        <div class="my-1">
+
+                            <div style="float: left; font-size: 14px;"><span>{{defaultAddress.city}},{{defaultAddress.state}}</span></div>
+
+                        </div>
+
+                        <div class="my-1">
+
+                            <div style="float: left; font-size: 14px;"><span>{{defaultAddress.pincode}}</span></div>
+                        </div>
+
+                        <div class="my-1">
+
+                            <div style="float: left; font-size: 14px;"><span>India </span></div>
+                        </div>
+
+                        <div>
+
+
+                            <div class="form-row my-3">
+                                <button type="button" class="btn col mx-1 pri-bg-color" data-toggle="modal" data-target=".bd-select-address-lg">Change address
+                                    </button>
+                            </div>
+
+                        </div>
+                    </div>
+                </div>
+                <div class="modal fade bd-select-address-lg" tabindex="-1" role="dialog" aria-labelledby="myLargeModalLabel" aria-hidden="true">
+                    <div class="modal-dialog modal-lg">
+                        <div class="modal-content address-view-model">
+                            <div class="modal-header">
+                                <h5 class="modal-title" id="addressModalLongTitle">Select address
+                                </h5>
+                                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                    <span aria-hidden="true">&times;</span>
+                                </button>
+                            </div>
+
+                            <div class="model-body">
+                                <form method="POST" action="{% url 'Home:Items:Order:changeCheckoutAddrs' 'change-address' %}">{% csrf_token %}
+                                    <table class="table table-sm" style="font-size: 13px;">
+                                        <thead>
+                                            <tr class="thead-light">
+                                                <th scope="col">Select</th>
+                                                <th scope="col">Name</th>
+                                                <th scope="col">Type</th>
+                                                <th scope="col">Address</th>
+                                                <th scope="col">Pincode</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            {% for address in addressList %}
+                                            <tr>
+                                                <td class="text-center"><input id="{{address.address_id}}" value="{{address.address_id}}" class="form-check-input" type="radio" name="addressRadio" />
+                                                </td>
+                                                <td>{{address.person_name}}</td>
+                                                <td>{{addresstype}}</td>
+                                                <td>{{address.line1}} {{address.line2}} {{address.city}}</td>
+                                                <td>{{address.pincode}}</td>
+                                            </tr>
+                                            {% endfor %}
+                                        </tbody>
+                                    </table>
+                                    <div class="row p-2">
+                                        <div class="col">
+                                            <input type="submit" class="btn btn-sm pri-bg-color text-left" value="Done" />
+
+                                        </div>
+
+                                </form>
+
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-6 col-12">
+                    <div class="your-order mb-3 border p-4">
+                        <h3 class="border-bottom pb-2">Your order</h3>
+                        <div class="your-order-table table-responsive">
+                            <table>
+                                <thead class="">
+                                    <tr class="">
+                                        <th class="product-name py-3">Product</th>
+                                        <th class="product-total py-3 pl-3">Total {{crtItem.crt_item_name}} </th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+
+                                    {% for item in cartitems %}
+
+                                    <tr class="cart_item ">
+                                        <td class="product-name py-3">
+                                            {{item.crt_item }} <strong class="product-quantity"> × {{item.crt_item_qty}}</strong>
+                                        </td>
+                                        <td class="product-total py-3">
+                                            <span class="amount pl-3 pl-3">&#8377; {{ item.crt_item.crt_item_price|mul:item.crt_item_qty }}</span>
+
+                                        </td>
+                                    </tr>
+                                    {% empty %} {% for crt in crtItem %}
+                                    <tr class="cart_item ">
+                                        <td class="product-name py-3">
+                                            {{crt.crt_item_name}} <strong class="product-quantity"> × {{request.session.qty}} </strong>
+                                        </td>
+                                        <td class="product-total py-3">
+                                            <span class="amount pl-3 pl-3">&#8377; {{ crt.crt_item_price|mul:request.session.qty  }}</span>
+
+                                        </td>
+                                    </tr>
+                                    {% endfor %} {% endfor %}
+
+                                </tbody>
+                                <tfoot>
+                                    <tr class="cart-subtotal  ">
+                                        <th class="py-3">Cart Subtotal</th>
+                                        <td><span class="amount pl-3">&#8377;{{total}}</span></td>
+                                    </tr>
+                                    <tr class="shipping ">
+                                        <th class="py-3">Shipping Rate</th>
+                                        <td>
+                                            <span class="amount pl-3">&#8377; {{shippingRate}}</span>
+                                        </td>
+                                    </tr>
+                                    <tr class="order-total">
+                                        <th class="py-3">Order Total</th>
+                                        <td><strong><span class="amount pl-3">&#8377; {{orderTotalAmt}}</span></strong>
+                                        </td>
+                                    </tr>
+                                </tfoot>
+                            </table>
+                        </div>
+
+                        <div class="pt-3">
+                            <form action="{% url 'Payments:pay' %}" method="post">{% csrf_token %}
+                                <div class="form-group">
+                                    <div class="row mb-3">
+                                        <div class="col-6">
+                                            <div class="form-check">
+                                                <input class="form-check-input" type="radio" name="pay_mtd" value="1" checked>
+                                                <label class="form-check-label" for="pay_mtd">
+                                                    Pay On Delivery
+                                                </label>
+                                            </div>
+                                        </div>
+                                        <div class="col-6">
+                                            <div class="form-check">
+                                                <input class="form-check-input" type="radio" name="pay_mtd" value="2">
+                                                <label class="form-check-label" for="pay_mtd">
+                                                    Pay using Paytm
+                                                </label>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <input type="hidden" name="next" value="{{ request.path }}">
+
+                                    <button class="btn-cxt btn-block" id="place-ord-btn">Place Order</button>
+                                </div>
+
+
+
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+    <!-- checkout-area end -->
+</main>
+
+
+{%endblock%} {% block customscript %}
+<script>
+</script>
+{%endblock%}
+
+
+<!-- <a href="{% url 'Authentication:addAddress' %}"> <button type="button" class="btn col mx-1 pri-bg-color" 
+                                            {% comment %} data-toggle="modal"
+                                            data-target=".bd-new-address-lg" {% endcomment %}
+                                            >New address
+                                    </button></a> -->
+<!-- <div class="modal fade bd-new-address-lg" tabindex="-1" role="dialog" aria-labelledby="myLargeModalLabel" aria-hidden="true">
+                                        <div class="modal-dialog modal-lg">
+                                            <div class="modal-content address-view-model">
+                                                <div class="modal-header">
+                                                    <h5 class="modal-title">Add new address</h5>
+                                                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                                        <span aria-hidden="true">&times;</span>
+                                                    </button>
+                                                </div>
+
+                                                <div class="model-body px-3 py-1">
+                                                    <form action="">
+                                                        <div class="form-row">
+                                                            <div class="form-group col text-left">
+                                                                <label for="addFirstName">First Name</label>
+                                                                <input type="text" class="form-control form-control-sm" id="addFirstName" placeholder="first name">
+                                                            </div>
+                                                            <div class="form-group col text-left">
+                                                                <label for="addLastName" class="text-left">Last
+                                                                    Name</label>
+                                                                <input type="text" class="form-control form-control-sm" id="addLastName" placeholder="last name">
+                                                            </div>
+                                                        </div>
+                                                        <div class="form-row">
+                                                            <div class="form-group col text-left">
+                                                                <label for="addMobileNo">Mobile no</label>
+                                                                <input type="tel" class="form-control form-control-sm" id="addMobileNo" placeholder="mobile number">
+                                                            </div>
+                                                            <div class="form-group col text-left">
+                                                                <label for="addType" class="text-left">Address
+                                                                    Type</label>
+                                                                <select id="addType" class="form-control form-control-sm">
+                                                                    <option selected>Choose...</option>
+                                                                    <option>Home</option>
+                                                                    <option>Office</option>
+                                                                    <option>Other</option>
+                                                                </select>
+                                                            </div>
+                                                        </div>
+                                                        <div class="form-row p-1">
+                                                            <label for="addressLine1">Address line 1</label>
+                                                            <input type="text" class="form-control form-control-sm" id="addressLine1" placeholder="Flat, House no., Building, Company, Apartment" />
+                                                        </div>
+                                                        <div class="form-row p-1">
+                                                            <label for="addressLine2">Address line 2</label>
+                                                            <input typpe="text" class="form-control form-control-sm" id="addressLine2" placeholder="Area, Colony, Street, Sector, Village" />
+                                                        </div>
+                                                        <div class="form-row pt-1 px-1">
+                                                            <div class="form-group col text-left">
+                                                                <label for="addLandmark">Landmark</label>
+                                                                <input type="text" class="form-control form-control-sm" id="addLandmark" placeholder="landmark">
+                                                            </div>
+                                                            <div class="form-group col text-left">
+                                                                <label for="addCity">City</label>
+                                                                <input type="text" class="form-control form-control-sm" id="addCity">
+                                                            </div>
+                                                        </div>
+                                                        <div class="form-row p-1">
+                                                            <div class="form-group col text-left">
+                                                                <label for="addState">State</label>
+                                                                <select id="addState" class="form-control form-control-sm">
+                                                                    <option value="" selected disabled>--Select Your
+                                                                        State--
+                                                                    </option>
+                                                                    <option>Gujarat</option>
+                                                                    <option>Rajastan</option>
+                                                                    <option>Madhya Pradesh</option>
+                                                                    <option>Maharashtra</option>
+                                                                    <option>Gujarat</option>
+                                                                    <option>Rajastan</option>
+                                                                    <option>Madhya Pradesh</option>
+                                                                    <option>Maharashtra</option>
+                                                                </select>
+                                                            </div>
+                                                            <div class="form-group col text-left">
+                                                                <label for="addPincode">Pincode</label>
+                                                                <input type="text" class="form-control form-control-sm" id="addPincode">
+                                                            </div>
+                                                        </div>
+                                                        <div class="form-group px-1">
+                                                            <div class="form-check text-left">
+                                                                <input class="form-check-input" type="checkbox" id="addSaveLater">
+                                                                <label class="form-check-label" for="addSaveLater">
+                                                                    Save address for later
+                                                                </label>
+                                                            </div>
+                                                        </div>
+                                                        <div class="form-row text-left pb-1 px-1">
+                                                            <button type="submit" class="btn btn-sm pri-bg-color text-left">Save
+                                                                address
+                                                            </button>
+                                                        </div>
+                                                    </form>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div> -->

@@ -1,0 +1,329 @@
+{% extends 'common/common.html' %} {% load static %} {% block title %} CS - My Cart {% endblock %} {% block link %}
+<link rel="stylesheet" href="{% static 'css/style.css' %}">
+<link rel="stylesheet" href="{% static 'css/creativestyle.css' %}"> {% endblock %} {% block content %}
+
+
+
+<div class="main-content">
+
+    <section class="inner-content">
+        <div class="container">
+            <div class="infomain">
+                <ol class="breadcrumb">
+                    <li class="breadcrumb-item"><a href="#">Home</a></li>
+                    <li class="breadcrumb-item"><a href="#">Creative Store</a></li>
+                    <li class="breadcrumb-item"><a href="#">My Account</a></li>
+                    <li class="breadcrumb-item active">My Cart</li>
+                </ol>
+            </div>
+            <div>
+                {% include 'includes/messages.html' %}
+            </div>
+            <div class="cart-main">
+                <div class="row d-flex">
+                    <div class="col-md-8 col-12 border bg-light  my-3">{% csrf_token %} {% for item in cartitems %}
+
+                        <div class="row d-flex my-2 p-2 cart-item ">
+                            <div class="col-4 cart-image">
+
+
+
+                                <img class="img-fluid" src="{{item.crt_item.get_image_url.crt_img_url.url}}" alt="">
+
+                            </div>
+                            <div class="col-8 cart-detail">
+                                <div class="cart-name ">
+                                    <span class="h4">{{item.crt_item.crt_item_name}}</span>
+                                    <!-- <div class="form-check" style="display: inline; float: right;">
+                                        <input type="checkbox" class="form-check-input" onchange="changeChecked(this);" checked>
+                                    </div> -->
+                                </div>
+
+
+                                <div class="my-3">
+
+
+                                    <div class="form-group">
+                                        {% csrf_token %}
+                                        <label for="input-cart-qty" style="color: #000; font-weight: 400;">Quantity : </label>
+                                        <input class="form-control-inline" type="number" value="{{item.crt_item_qty}}" min="1" max="10" onchange="change_qty(this,'{{item.cart_id}}');">
+                                        <!-- <select class="form-control" name="input-cart-qty " id="input-cart-qty">
+                                                <option value="1">1</option>
+                                                <option value="2">2</option>
+                                                <option value="3">3</option>
+                                                <option value="4">4</option>
+                                                <option value="5">5</option>
+                                            </select> -->
+                                    </div>
+                                    <div class="cart-price my-3">
+                                        <p class="" style="color: #000; font-weight: 500;">&#8377; {{item.crt_item.crt_item_price}}</p>
+                                    </div>
+
+                                    <form>
+                                        <div class="form-group cart-btn">
+                                            <div class="brd my-3"></div>
+                                            <button class="btn-cxt" style="float: right;" onclick="removeCartItem('{{item.cart_id}}')"> <i class="fa fa-trash" aria-hidden="true"></i> </button>
+                                        </div>
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
+                        <hr> {% empty %}
+                        <div class="p-5 text-center">
+                            <p class="text-center text-muted">No Items found in cart.</p>
+                            <img src="{% static 'img/emptycart.svg' %}" height="153px" class="m-2">
+                            <p class="text-center mt-2"><a class="btn-link pri-color link-effect" href="{%url 'Home:creativestore'%}">Explore creative store -></a></p>
+                        </div>
+
+
+                        {% endfor %}
+
+
+                    </div>
+
+
+                    {% if cartitems %}
+                    <div class="col-md-4 col-12 my-3">
+                        <div class="card p-2 order-summary">
+
+                            <div class="my-1">
+                                <span style="font-weight: bolder;">Order Summary</span>
+                            </div>
+
+                            <div class="my-1">
+                                <div style="float: left; font-size: 12px;"><span>Total MRP (Inclusive of all taxes)</span></div>
+                                <div style="float: right"><span class="totalAmt"></span> </div>
+                            </div>
+
+                            <div class="my-1">
+                                <div style="float: left; font-size: 12px;"> Shipping Charges</div>
+                                <div style="color: var(--pri-color);  font-size: 12px; font-weight: bold; float: right;">FREE</div>
+                            </div>
+                            <div class="my-1" style="border-top: 1px solid rgb(47, 59, 47)"></div>
+                            <div class="my-1">
+                                <div style="float: left; font-size: 14px; font-weight: bold;">Total Payable</div>
+                                <div style="color: var(--pri-color); font-size: 14px; font-weight: bold; float: right;" class="totalAmt"></div>
+                            </div>
+
+                            <div>
+                                <form id="place_order" method="post" action="">{% csrf_token %}
+
+                                    <div class="form-group cart-btn my-3">
+
+
+                                    </div>
+                                </form>
+                                <a href="{% url 'Home:Items:Order:checkout' 'cart' %}"><button class="btn-cxt btn-block" id="place-ord-btn"> Checkout</button></a>
+                            </div>
+                        </div>
+
+                    </div>
+
+                    {% endif %}
+
+
+                </div>
+
+
+            </div>
+
+
+        </div>
+    </section>
+</div>
+
+
+{% endblock %} {% block customscript %}
+<script>
+    function getTotal() {
+        $.ajax({
+            url: "{% url 'Home:Items:Cart:getTotal' %} ",
+            type: 'POST',
+            data: {
+                csrfmiddlewaretoken: $("input[name=csrfmiddlewaretoken]").val(),
+            },
+            success: function(data) {
+                $(".totalAmt ").html("&#8377; " + data.total)
+            }
+        })
+    }
+    getTotal();
+
+    function change_qty(context, id) {
+        qty = $(context).val();
+        console.log(qty);
+
+        $.ajax({
+            url: "{% url 'Home:Items:Cart:changeQty' %} ",
+            type: "POST",
+            data: {
+                cart_id: id,
+                cart_qty: qty,
+                csrfmiddlewaretoken: $("input[name=csrfmiddlewaretoken]").val(),
+            },
+            success: function(data) {
+                // console.log(data)
+                getTotal();
+            },
+            error: function(jqXHR, textStatus, errorThrown) {
+                Swal.fire(
+                    jqXHR.status + "",
+                    textStatus + " : " + errorThrown,
+                    'error'
+                )
+            }
+        })
+    }
+
+
+    function removeCartItem(id) {
+        $.ajax({
+            url: "{% url 'Home:Items:Cart:removeCartItem' %} ",
+            type: "POST",
+            data: {
+                cart_id: id,
+                csrfmiddlewaretoken: $("input[name=csrfmiddlewaretoken]").val(),
+            },
+            success: function(data) {
+                // console.log(data)
+                getTotal();
+            },
+            error: function(jqXHR, textStatus, errorThrown) {
+                Swal.fire(
+                    jqXHR.status + "",
+                    textStatus + " : " + errorThrown,
+                    'error'
+                )
+            }
+        })
+    }
+</script>
+{% endblock %}
+
+
+
+
+
+
+<div class="row d-flex my-2 p-2 cart-item ">
+    <div class="col-4 cart-image">
+        <img class="img-fluid" src="{% static 'img/products/creative/lamp1.jpg' %}" alt="">
+    </div>
+    <div class="col-8 cart-detail">
+        <div class="cart-name ">
+
+
+
+            <span class="h4">WALL LED LIGHTS </span>
+            <!-- <div class="form-check" style="display: inline; float: right;">
+                <input type="checkbox" class="form-check-input" id="cart-item-chk" checked >
+            </div> -->
+        </div>
+
+
+        <div class="my-3">
+            <form id="cart_qty" method="post">
+
+                <div class="form-group">
+
+                    <label for="input-cart-qty" style="color: #000; font-weight: 400;">Quantity : </label>
+                    <input class="form-control-inline" type="number" value="1" min="1" max="10">
+                    <!-- <select class="form-control" name="input-cart-qty " id="input-cart-qty">
+                        <option value="1">1</option>
+                        <option value="2">2</option>
+                        <option value="3">3</option>
+                        <option value="4">4</option>
+                        <option value="5">5</option>
+                    </select> -->
+                </div>
+                <div class="cart-price my-3">
+                    <p class="" style="color: #000; font-weight: 500;">&#8377; 300.00</p>
+                </div>
+            </form>
+            <form>
+                <div class="form-group cart-btn">
+                    <div class="brd my-3"></div>
+                    <button class="btn-cxt" id="cart-ord-btn" style="float: right;"> <i class="fa fa-trash" aria-hidden="true"></i> </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+<hr>
+
+
+
+<div class="row d-flex my-2 p-2 cart-item ">
+    <div class="col-4 cart-image">
+        <img class="img-fluid" src="{% static 'img/products/1.jpg' %}" alt="">
+    </div>
+    <div class="col-8 cart-detail">
+        <div class="cart-name ">
+            <span class="h4">White Gray T shirt</span>
+            <!-- <div class="form-check" style="display: inline; float: right;">
+                <input type="checkbox" class="form-check-input" id="cart-item-chk">
+            </div> -->
+        </div>
+
+        <div class="cart-size my-3">
+            <span class="" style="color: #000; font-weight: 400;">size:</span>
+            <span class="" style="color: rgb(141, 141, 141);">XL</span>
+        </div>
+        <div class="my-3">
+            <form id="cart_qty" method="post">
+
+                <div class="form-group">
+
+                    <label for="input-cart-qty" style="color: #000; font-weight: 400;">Quantity : </label>
+                    <input class="form-control-inline" type="number" value="1" min="1" max="10">
+
+                </div>
+                <div class="cart-price my-3">
+                    <p class="" style="color: #000; font-weight: 500;">&#8377; 300</p>
+                </div>
+                <div class="form-group cart-btn">
+                    <div class="brd my-3"></div>
+                    <button class="btn-cxt" id="cart-ord-btn" style="float: right;"> <i class="fa fa-trash" aria-hidden="true"></i> </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+<hr>
+
+<div class="row d-flex my-2 p-2 cart-item ">
+    <div class="col-4 cart-image">
+        <img class="img-fluid" src="{% static 'img/products/1.jpg' %}" alt="">
+    </div>
+    <div class="col-8 cart-detail">
+        <div class="cart-name ">
+            <span class="h4">White Gray T shirt</span>
+            <!-- <div class="form-check" style="display: inline; float: right;">
+                <input type="checkbox" class="form-check-input" id="cart-item-chk">
+            </div> -->
+        </div>
+
+        <div class="cart-size my-3">
+            <span class="" style="color: #000; font-weight: 400;">Size:</span>
+            <span class="" style="color: rgb(141, 141, 141);">XL</span>
+        </div>
+        <div class="my-3">
+            <form id="cart_qty" method="post">
+
+                <div class="form-group">
+
+                    <label for="input-cart-qty" style="color: #000; font-weight: 400;">Quantity : </label>
+                    <input class="form-control-inline" type="number" value="1" min="1" max="10">
+
+                </div>
+                <div class="cart-price my-3">
+                    <p class="" style="color: #000; font-weight: 500;">&#8377; 300</p>
+                </div>
+                <div class="form-group cart-btn">
+                    <div class="brd my-3"></div>
+                    <button class="btn-cxt" id="cart-ord-btn" style="float: right;"> <i class="fa fa-trash" aria-hidden="true"></i> </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>

@@ -1,0 +1,32 @@
+<!--Footer-->
+
+<div class="c-footer-top">
+    <div class="container">
+        <div class="row  text-center">
+            <div class="c-footer-logo col-xs-12">
+                <a href="#">Creative Scrapyard</a>
+            </div>
+        </div>
+        <div class="footer-box">
+            <div class="row">
+                <div class="col">
+                    <ul style="list-style-type:none;">
+                        <li><a class="c-footer-links" href="{% url 'Home:creativestore' %}">Creative Store</a></li>
+                        <li><a class="c-footer-links" href="{% url 'Home:scrapyard' %}">Scrapyard</a></li>
+                        <li><a class="c-footer-links" href="{% url 'Home:Items:Cart:addToCart' %}">Your Cart</a></li>
+                        <li><a class="c-footer-links" href="{% url 'Authentication:order_history' %}">Your Orders</a></li>
+                        <li><a class="c-footer-links" href="{% url 'Authentication:payments' %}">Your Payments</a></li>
+                </div>
+                <div class="col">
+                    <ul style="list-style-type:none;">
+                        <li><a class="c-footer-links" href="{% url 'Home:achievers' %}">Artists Of The Month</a></li>
+                        <li><a class="c-footer-links" href="{% url 'Home:contactus' %}">Contact Us</a></li>
+                        <li><a class="c-footer-links" href="{% url 'Home:aboutus' %}">About Us</a></li>
+                        <li><a class="c-footer-links" href="{% url 'Authentication:dashboard' %}">Your Dashboard</a></li>
+                        <li><a class="c-footer-links" href="{% url 'Home:home' %}">Home</a></li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

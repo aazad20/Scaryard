@@ -1,0 +1,70 @@
+{% extends 'account/base-dashboard.html' %} {% load static %} {% block baselink %} {% load mathfilters %}
+<link rel="stylesheet" href="{% static 'css/nikul/creative-orders.css' %}" /> {% endblock %} {% block base %}
+
+<div class="page-title">
+    Creative Orders
+</div>
+<hr/>
+
+
+<div class="bx-shd my-3 py-2 px-3">
+    <span class="card-title">All creative orders</span>
+    <div class="py-3">
+        <table class="table table-hover border-bottom tablemanager">
+            <thead>
+                <tr>
+                    <th scope="col" class="text-center fs-9">ID</th>
+                    <th scope="col" class="text-center fs-9">Person name</th>
+                    <th scope="col" class="text-center fs-9">Order date</th>
+                    <th scope="col" class="text-center fs-9">Delivery Date</th>
+                    <th scope="col" class="text-center fs-9">Deliver Address</th>
+                    <th scope="col" class="text-center fs-9">Status</th>
+                    <th scope="col" class="text-center fs-9" style="width: 125px;">Commission</th>
+                    <th scope="col" class="text-center fs-9">Total price</th>
+                    <!-- <th scope="col" class="text-center fs-9 disableFilterBy disableSort">Action</th> -->
+                </tr>
+            </thead>
+            <tbody>
+                {% for detail in details %}
+
+                <tr>
+                    <td scope="row" class="text-center">
+
+                        <a href="{% url 'Authentication:order_details' detail.order.order_id  %}" class="link-effect">
+                            {{ detail.order.order_id }}
+                        </a>
+                    </td>
+                    <td class="text-center">{{ detail.order.person_name }}</td>
+                    <td class="text-center">{{ detail.order.order_date|date:"M d, Y" }}</td>
+                    <td class="text-center">{{ detail.order.delivery_date|date:"M d, Y" }}</td>
+                    <td class="text-center">{{ detail.order.delivery_address }}</td>
+                    <td class="text-center"><span class="">
+
+                            
+                        {% if detail.item_status == 1 %}
+                            Pending
+                        {% elif detail.item_status == 2 %}
+                            Completed
+                        {% elif detail.item_status == 3  %}
+                            Cancelled
+                        {% elif detail.item_status == 4  %}
+                            Failed
+                        {% elif detail.item_status == 5  %}
+                            Returned
+                        {% endif %}
+                    </span></td>
+                    <td class="text-center">&#8377; {{ detail.total_price|floatformat:2|mul:"0.2"|floatformat:2 }}</td>
+                    <td class="text-center">&#8377; {{ detail.total_price|floatformat:2 }}</td>
+
+                    <!-- <td class="text-center">&#8377; {{ detail.total_amt|floatformat:2|mul:"0.2"|floatformat:2 }}</td>
+                    <td class="text-center">&#8377; {{ detail.total_amt|floatformat:2 }}</td> -->
+
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+    <button id="loadmore-btn" class="btn btn-sm pri-bg-color">Load more</button>
+
+</div>
+{% endblock %}

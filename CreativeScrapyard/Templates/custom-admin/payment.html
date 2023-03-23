@@ -1,0 +1,47 @@
+{% extends 'custom-admin/common.html' %} {% load static %} {%block content%}
+<div class="page-title">
+    Payments
+    <hr>
+</div>
+<div class="tab-inn">
+    <div class="table-responsive table-user">
+        <table class="table table-hover tablemanager">
+            <thead>
+                <tr>
+                    <th class="text-center">Transaction ID</th>
+                    <th class="text-center">Order ID</th>
+                    <th class="text-center">Mode</th>
+                    <th class="text-center">Amount</th>
+                    <th class="text-center">Status</th>
+                    <th class="text-center disableSort disableFilterBy">Remark</th>
+
+                </tr>
+            </thead>
+            <tbody>
+                {% for pay in payments %}
+                <tr>
+                    <td class="text-center"><span class="list-enq-name">{{pay.transaction_id}}</span>
+                    </td>
+                    <td class="text-center"><span class="list-enq-name"><a href="{% url 'CustomAdmin:orderdetails' pay.order.order_id %}">{{pay.order.order_id}}</a></span>
+                    </td>
+                    <td class="text-center"><span class="list-enq-name">{{pay.payment_mode}}</span>
+                    </td>
+                    <td class="text-center">&#8377; {{pay.payment_amt|floatformat:2}}</td>
+                    <td class="text-center">
+                        {% if pay.payment_status == 1 %}
+                        <span class="text-warning">Pending</span> {% elif pay.payment_status == 2 %}
+                        <span style="color:#20c997;">Success</span> {% elif pay.payment_status == 3 %}
+                        <span class="text-danger">Failed</span> {% endif %}
+                    </td>
+                    <td class="text-center">{{pay.payment_remark}}
+                    </td>
+                </tr>
+                {% endfor %}
+
+            </tbody>
+        </table>
+    </div>
+    <button id="loadmore-btn" class="btn-cxt mb-3">Load more</button>
+</div>
+
+{%endblock%}

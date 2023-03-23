@@ -1,0 +1,179 @@
+{% extends 'account/base-dashboard.html' %} {% load static %} {% block baselink %}
+<link rel="stylesheet" href="{% static 'css/nikul/add-product.css' %}"/> {% endblock %} {% block base %}
+
+<div class="page-title">
+    Add Product
+</div>
+<hr/>
+<div class="main-page">
+    <form method="post" >
+        <div class="form-group">
+            <label for="productName">Product Name</label>
+            <input type="text" name="crt_item_name" class="form-control" id="productName" placeholder="Product Name">
+        </div>
+        <div class="form-group">
+            <label for="productDescription">Product Description</label>
+            <textarea class="form-control" name="crt_item_desc" id="productDescription" rows="3"></textarea>
+        </div>
+    </form>
+
+        <div class="row">
+            <div class="col">
+                <div class="form-group">
+                    <label for="weight">Weight</label>
+                    <select id="weight" class="form-control">
+                        <option selected>Choose...</option>
+                        <option>...</option>
+                    </select>
+                </div>
+            </div>
+            <div class="col">
+                <div class="form-group">
+                    <label for="height">Height</label>
+                    <select id="height" class="form-control">
+                            <option selected>Choose...</option>
+                            <option>...</option>
+                    </select>
+                </div>
+            </div>
+            <div class="col">
+                <div class="form-group">
+                    <label for="width">Width</label>
+                    <select id="width" class="form-control">
+                        <option selected>Choose...</option>
+                        <option>...</option>
+                    </select>
+                </div>
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col">
+                <div class="form-group">
+                    <label for="itemCategory">Category</label>
+                    <form action="{% url 'Authentication:get_crt_sub_cat' 'getsub' %}" method="POST">{% csrf_token %}
+                    <select id="itemCategory" name="itemCategory" class="form-control" onchange="this.form.submit();">
+                        <option value="0">Choose...</option>
+                        {% for cat in crtCategory %}
+                        <option value="{{ cat.crt_category_id }}" {%if cat.crt_category_id == crt_id %}selected{%endif%}>
+                            {{cat.crt_category_name}}
+                        </option>
+                        {% endfor %}
+                    </select>
+                    </form>
+                </div>
+            </div>
+            <div class="col">
+                <div class="form-group">
+                    <label for="itemSubCategory">Sub-Category</label>
+                    <select id="itemSubCategory" class="form-control">
+                        <option selected>Choose...</option>
+                        {% for cat in crtSubCategory %}
+                        <option value="{{ cat.crt_sub_category_id }}">
+                            {{cat.crt_sub_category_name}}
+                        </option>
+                        {% endfor %}
+                    </select>
+                </div>
+            </div>
+        </div>
+
+        <div id="accordion" class="form-group">
+            <div class="card">
+                <div class="card-header">
+                    <a class="btn-link pri-color link-effect" data-toggle="collapse" href="#collapse1">
+                        Product 1
+                    </a>
+                </div>
+                <div id="collapse1" class="collapse show" data-parent="#accordion">
+                    <div class="card-body">
+
+                        <form action="">
+                            {% include 'includes/file-uploader.html' %}
+                            <div class="form-group row ">
+                                <label for="inputcolor1 " class="col-sm-2 col-form-label ">Product Color</label>
+                                <div class="col-sm-1 ">
+                                    <input type="color" id="inputcolor1 " class="form-control ">
+                                </div>
+                            </div>
+                            <div class="form-group row ">
+                                <label for="inputsize1 " class="col-sm-2 col-form-label ">Size</label>
+                                <div class="col-sm-2 ">
+                                    <input type="text " class="form-control " id="inputsize1 " placeholder="In cm ">
+                                </div>
+                            </div>
+                            <div class="form-group row ">
+                                <label for="inputquantity1 " class="col-sm-2 col-form-label ">Quantity</label>
+                                <div class="col-sm-2 ">
+                                    <select id="inputquantity1 " class="form-control ">
+                                        <option selected>1</option>
+                                        <option>2</option>
+                                        <option>3</option>
+                                        <option>4</option>
+                                        <option>5</option>
+                                        <option>6</option>
+                                        <option>7</option>
+                                        <option>8</option>
+                                        <option>9</option>
+                                        <option>10</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="form-group row ">
+                                <label for="inputunitprice1 " class="col-sm-2 col-form-label ">Unit Price</label>
+                                <div class="col-sm-2 ">
+                                    <input type="text " class="form-control " id="inputunitprice1 "
+                                           placeholder="In rupees ">
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+
+            <div class="card">
+                <div class="card-header">
+                    <a class="btn-link pri-color link-effect" data-toggle="collapse" href="#collapse2">
+                        Product 2
+                    </a>
+                </div>
+                <div id="collapse2" class="collapse show" data-parent="#accordion">
+                    <div class="card-body ">
+                        <!--                        new file uploader-->
+                        {% include 'includes/file-uploader.html' %}
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="form-group ">
+            <a href="# " class="btn-link pri-color link-effect">+Add</a>
+        </div>
+        <button type="submit " class="btn btn-block pri-bg-color px-4 ">Add Product</button>
+</div>
+
+{% endblock %}
+
+{% block baseScript %}
+<script>
+        var deletePhoto = function(event, id) {
+            $.ajax({
+                url: 'http://127.0.0.1:8000/accounts/photo-delete/' + id,
+                success: function() {
+                    is_done(true);
+                }
+            });
+
+            function is_done(ans) {
+                if(ans) {
+                    var trID = '#photo-list-' + id;
+                    $(trID).remove();
+                }else{
+                    alert("Technical issue.");
+                }
+            }
+            event.preventDefault();
+        }
+
+
+</script>
+{% endblock %}
