@@ -76,27 +76,26 @@ def signup(request):
         try:
             #userSignUp = User(username=username,first_name=first_name,\
              #   last_name=last_name,email=email,password=password)
-            userSignUp = User.objects.create_user(username,\
-               email,password,first_name=first_name,last_name=last_name)
-            userSignUp.is_active=False
+            userSignUp = User.objects.create_user(username,email,password,first_name=first_name,last_name=last_name)
+            userSignUp.is_active=True
             userSignUp.save()
             userProfile = Profile(user_id=userSignUp.user_id,user_gender=gender)
             userProfile.save()
 
-            current_site = get_current_site(request)
-            mail_subject = 'Activate your account.'
-            message = render_to_string('account/account_active_email.html', {
-                'user': userSignUp,
-                'domain': current_site.domain,
-                'uid':urlsafe_base64_encode(force_bytes(userSignUp.user_id)),
-                'token':account_activation_token.make_token(userSignUp),
-            })
-            to_email = email
-            email = EmailMessage(
-                        mail_subject, message, to=[to_email]
-            )
-            email.send()
-            return redirect("Authentication:EmailverificationSent")
+            # current_site = get_current_site(request)
+            # mail_subject = 'Activate your account.'
+            # message = render_to_string('account/account_active_email.html', {
+            #     'user': userSignUp,
+            #     'domain': current_site.domain,
+            #     'uid':urlsafe_base64_encode(force_bytes(userSignUp.user_id)),
+            #     'token':account_activation_token.make_token(userSignUp),
+            # })
+            # to_email = email
+            # email = EmailMessage(
+            #             mail_subject, message, to=[to_email]
+            # )
+            # email.send()
+            # return redirect("Authentication:EmailverificationSent")
         except Exception as e:
             print(e)
             messages.error(request, 'Some error occured try after sometime')
