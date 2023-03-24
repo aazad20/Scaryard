@@ -404,7 +404,7 @@ def creativeCat(request,id=None,action=None):
                 return render(request,template,{"subCrtCats":subCrtCats,"mainCat":crtMainCats, "parentCat":parentCat,"dispSubCat":True })
 
         elif action=="addMain":
-            if request.method=="POST" and request.is_ajax():
+            if request.method=="POST":
             #if request.method=="POST":
                 
                 mainCrtCat=MainCreativeCategoryForm(request.POST or None)
@@ -438,7 +438,7 @@ def creativeCat(request,id=None,action=None):
             
         elif action=="addCrtSub" and id!=None:
            # print("DD3")
-            if request.method=="POST" and request.is_ajax():
+            if request.method=="POST":
                 
                 newSubCrtCat=SubCreativeCategoryForm(request.POST or None)
                 
@@ -462,7 +462,7 @@ def creativeCat(request,id=None,action=None):
         
         elif action=="editMain" and id!=None:
 
-            if request.method=="POST" and request.is_ajax():
+            if request.method=="POST":
                # print("editmain")
                 editMainCrtCat = get_object_or_404(tbl_crt_categories, pk=id)
                 editMainCrtCat = MainCreativeCategoryForm(request.POST or None,instance=editMainCrtCat)
@@ -477,7 +477,7 @@ def creativeCat(request,id=None,action=None):
                     err=err['__all__'][0]['message']
                     return JsonResponse({"saved":False,"message":err})  
 
-            elif request.method=="GET" and request.is_ajax():
+            elif request.method=="GET":
                 print("ajax")
                 mainCrtCat = get_object_or_404(tbl_crt_categories, pk=id)
                 return JsonResponse({"crt_category_name":mainCrtCat.crt_category_name})
@@ -509,7 +509,7 @@ def creativeCat(request,id=None,action=None):
       
         elif action=="delMain" and id!=None:
             #print("DelMain")
-            if request.method=="POST" and request.is_ajax():
+            if request.method=="POST":
                 delMainCrtCat = get_object_or_404(tbl_crt_categories, pk=id)
                 try:
                     itemName=delMainCrtCat.crt_category_name
@@ -522,7 +522,7 @@ def creativeCat(request,id=None,action=None):
                 raise PermissionDenied
         elif action=="delSubs" and id!=None:
             #print("DelMain")
-            if request.method=="POST" and request.is_ajax():
+            if request.method=="POST":
                 delSubCrtCat = get_object_or_404(tbl_crt_subcategories, pk=id)
                 try:
                     itemName=delSubCrtCat.crt_sub_category_name
@@ -571,7 +571,7 @@ def scrapCat(request,id=None,action=None):
 
         elif action=="addMain":
          #   print("DD2")
-            if request.method=="POST" and request.is_ajax():
+            if request.method=="POST":
                 mainScpCat=MainScrapCategoryForm(request.POST or None)
                 if mainScpCat.is_valid():
                     #main_crt_Cat = mainScpCat.cleaned_data['crt_category_name']
@@ -591,7 +591,7 @@ def scrapCat(request,id=None,action=None):
         elif action=="addScpSub" and id!=None:
             
          #   print("DD3")
-            if request.method=="POST" and request.is_ajax():
+            if request.method=="POST" :
                 
                 newSubScpCat=SubScrapCategoryForm(request.POST or None)
                 if newSubScpCat.is_valid():
@@ -613,7 +613,7 @@ def scrapCat(request,id=None,action=None):
         
         elif action=="editMain" and id!=None:
 
-            if request.method=="POST" and request.is_ajax():
+            if request.method=="POST" :
             #    print("editmain")
                 editMainScpCat = get_object_or_404(MainScrapCategory,pk=id)
                 editMainScpCat = MainScrapCategoryForm(request.POST or None,instance=editMainScpCat)
@@ -627,7 +627,7 @@ def scrapCat(request,id=None,action=None):
                     err=editMainScpCat.errors.get_json_data(escape_html=True)
                     err=err['__all__'][0]['message']
                     return JsonResponse({"saved":False,"message":err}) 
-            elif request.method=="GET" and request.is_ajax():
+            elif request.method=="GET":
             #    print("ajax")
                 mainScpCat = get_object_or_404(MainScrapCategory,pk=id)
                 return JsonResponse({"scp_category_name":mainScpCat.scp_category_name})
@@ -636,7 +636,7 @@ def scrapCat(request,id=None,action=None):
         
         elif action=="editSubs" and id!=None:
          #   print("EditSubs")
-            if request.method=="POST" and request.is_ajax():
+            if request.method=="POST":
                 editSubScpCat = get_object_or_404(SubScrapCategory,pk=id)
                 editSubScpCat = SubScrapCategoryForm(request.POST or None,instance=editSubScpCat)
                 if editSubScpCat.is_valid():
@@ -649,7 +649,7 @@ def scrapCat(request,id=None,action=None):
                     err=editSubScpCat.errors.get_json_data(escape_html=True)
                     err=err['__all__'][0]['message']
                     return JsonResponse({"saved":False,"message":err}) 
-            elif request.method=="GET" and request.is_ajax():
+            elif request.method=="GET":
              #   print("ajax")
                 subScpCat = get_object_or_404(SubScrapCategory,pk=id)
                 return JsonResponse({"scp_sub_category_name":subScpCat.scp_sub_category_name})
@@ -659,7 +659,7 @@ def scrapCat(request,id=None,action=None):
       
         elif action=="delMain" and id!=None:
           #  print("DelMain")
-            if request.method=="POST" and request.is_ajax():
+            if request.method=="POST":
                 delMainScpCat = get_object_or_404(MainScrapCategory,pk=id)
                 try:
                     itemName=delMainScpCat.scp_category_name
@@ -672,7 +672,7 @@ def scrapCat(request,id=None,action=None):
                 raise PermissionDenied
         elif action=="delSubs" and id!=None:
          #   print("DelMain")
-            if request.method=="POST" and request.is_ajax():
+            if request.method=="POST":
                 delSubScpCat = get_object_or_404(SubScrapCategory,pk=id)
                 try:
                     itemName=delSubScpCat.scp_sub_category_name
